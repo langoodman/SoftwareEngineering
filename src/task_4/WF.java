@@ -6,7 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class WF {
 
@@ -46,7 +49,7 @@ public class WF {
 		@Override
 		public int compareTo(Letter l) {
 			if( l.getAppear() == this.getAppear() ){
-					if( this.getOneLetter() < l.getOneLetter() ) return 1;
+				if( this.getOneLetter() < l.getOneLetter() ) return 1;
 			}
 			else{
 				if( this.getAppear() < l.getAppear() ) return 1;
@@ -110,9 +113,34 @@ public class WF {
 					System.out.println(letter.toString());
 				}
 			}
+			else if( option.equals("-f") ){
+				text = text.replaceAll("[^0-9a-zA-Z]+", " ");
+				String words[] = text.split("\\s+");//分割一个或多个空格
+				Map< String , Integer > count = new TreeMap< String , Integer >();
+				for( String word : words ){
+					int cnt = 1;
+					if( count.get(word) != null ) cnt = count.get(word) + 1;
+					count.put( word , cnt );
+				}
+				
+		        List<Map.Entry<String, Integer>> printWords = new ArrayList<Map.Entry<String, Integer>>(count.entrySet());
+		        Collections.sort(printWords, new Comparator<Map.Entry<String, Integer>>() {
+		            @Override
+		            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+		                if(o1.getValue().compareTo(o2.getValue()) == 0){
+		                    return o1.getKey().compareTo(o2.getKey());
+		                }
+		                return o2.getValue().compareTo(o1.getValue());
+		            }
+		        });
+		        for( Map.Entry< String , Integer > word : printWords){ 
+		        	System.out.println( word.getKey()+":" + word.getValue() ); 
+		        }
+			}
+			else if( option.equals("-d") ){
+				
+			}
 		}
-		
-		
 		
 	}
 
