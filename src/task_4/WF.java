@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 public class WF {
 
@@ -132,6 +133,24 @@ public class WF {
         	System.out.println( word.getKey()+":" + word.getValue() ); 
         }
 	}
+	
+	/**
+	 * 递归查找文件
+	 * @param file
+	 */
+	public static Vector<String>needFilesPath = new Vector<String>();
+	private static void findAllFiles(File file , String filePath , Vector<String>needFilesPath){
+		File[] fs = file.listFiles();
+		for(File f:fs){
+			if(f.isDirectory()){
+				findAllFiles( f , filePath + "\\" + f.getName() + "\\" , needFilesPath );//若是目录，则递归打印该目录下的文件
+			}
+			if(f.isFile()){
+				needFilesPath.add(filePath + f.getName());//若是文件，直接保存路径
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
 		if( args.length < 2 ){
 			System.out.println("命令不正确!");
@@ -149,7 +168,6 @@ public class WF {
 					if( letter >= 'A' && letter <= 'Z' ){
 						letter += Math.abs('A' - 'a');
 					}
-					
 					if( letter >= 'a' && letter <= 'z' ){
 						sum++; // 计算字母的总数 排除非字母
 						cnt[ letter - 'a' ]++;
@@ -160,7 +178,6 @@ public class WF {
 					double p = (double)cnt[i] / (double)sum;
 					char ll = (char) (i + 'a');
 					letters.add(new Letter( ll , p ));
-					
 				}
 				Collections.sort(letters);
 				for( Letter letter : letters ){
@@ -186,8 +203,14 @@ public class WF {
 			}
 			else if( option.equals("-d") && args[1].equals("-s") ){
 				String directoryPath = args[2];
-				
-				
+				File file = new File(directoryPath);//获取其file对象
+				String filePath = directoryPath;
+				findAllFiles(file , filePath , needFilesPath);
+				for( String filesPath : needFilesPath ){
+					String text = fileText(filesPath);
+					System.out.println(filesPath + "的单词统计功能如下:");
+					printF(text);
+				}
 				
 			}
 			else if( option.equals("-d") ){
