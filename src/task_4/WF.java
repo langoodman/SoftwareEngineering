@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -185,7 +186,7 @@ public class WF {
         for( Map.Entry< String , Integer > word : printWords){ 
         	System.out.println( word.getKey()+":" + word.getValue() ); 
         	index++;
-        	if( index > n ) break;
+        	if( index >= n ) break;
         }
 	}
 	
@@ -230,8 +231,15 @@ public class WF {
 			else if( option.equals("-f") && args.length > 2 ){
 				String fileName = args[1]; // 文件名字
 				String text = fileText( fileName );// text 为文件中的内容
-				Integer n = Integer.valueOf(args[3]);
-		        printN(text , n );
+				if( Arrays.asList(args).contains("-n") ){
+					int i = 0;
+					for( i = 0 ; i < args.length ; i++ ){
+						if( args[i].equals("-n") ) break;
+					}
+					Integer n = Integer.valueOf(args[i + 1]);
+			        printN(text , n );
+				}
+				
 			}	
 			else if( option.equals("-d") && !args[1].equals("-s") ){
 				String directoryPath = args[1];
@@ -241,7 +249,15 @@ public class WF {
 					if(!f.isDirectory() && getFileExtension(f).equals(".txt") ){ // 后缀名为 txt 文件
 						String text = fileText(directoryPath + f.getName());
 						System.out.println(f.getName() + "的单词统计功能如下:");
-						printF(text);
+						if( Arrays.asList(args).contains("-n") ){
+							int i = 0;
+							for( i = 0 ; i < args.length ; i++ ){
+								if( args[i].equals("-n") ) break;
+							}
+							Integer n = Integer.valueOf(args[i + 1]);
+							printN(text , n);
+						}
+						else printF(text);
 					}
 				}
 			}
@@ -253,7 +269,15 @@ public class WF {
 				for( String filesPath : needFilesPath ){
 					String text = fileText(filesPath);
 					System.out.println(filesPath + "的单词统计功能如下:");
-					printF(text);
+					if( Arrays.asList(args).contains("-n") ){
+						int i = 0;
+						for( i = 0 ; i < args.length ; i++ ){
+							if( args[i].equals("-n") ) break;
+						}
+						Integer n = Integer.valueOf(args[i + 1]);
+						printN(text , n);
+					}
+					else printF(text);
 				}
 			}
 			else if( option.equals("-x") ){
@@ -292,16 +316,26 @@ public class WF {
 		                return o2.getValue().compareTo(o1.getValue());
 		            }
 		        });
+		        int index = 0;
+		        int i = 0 , n = -1;
+		        if( Arrays.asList(args).contains("-n") ){
+					for( i = 0 ; i < args.length ; i++ ){
+						if( args[i].equals("-n") ) break;
+					}
+					n = Integer.valueOf(args[i + 1]);
+				}
 		        for( Map.Entry< String , Integer > word : printWords){ 
 		        	System.out.println( word.getKey()+":" + word.getValue() ); 
+		        	index++;
+		        	if( n != -1 ){
+						if( index >= n ) break;
+					}
 		        }
 			}			
 			else if( option.equals("-p") ){
 				
 			}
-			else if( option.equals("-v") ){
-				
-			}
+			
 		}
 		
 	}
