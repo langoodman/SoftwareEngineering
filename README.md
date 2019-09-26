@@ -24,7 +24,6 @@
   + 参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列。
   + 例如：<strong>java task_4/WF -p task_4/词频测试数据集/"1.I Have a Dream.txt" 3 -n 4</strong>
 
-+ - -v < verb file >
-
-  - 参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列。
-  - 例如：<strong></strong>
++ -v  < verb file >
+  - 把动词的各种变形都归为它的原型来统计。
+  - 例如：<strong>java task_4/WF -f task_4/词频测试数据集/"1.I Have a Dream.txt" -v task_4/verbWordsFiles/"1.txt"</strong>

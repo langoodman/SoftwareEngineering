@@ -190,6 +190,48 @@ public class WF {
         }
 	}
 	
+	/**
+	 * 完成 -v 的功能
+	 * @param text
+	 */
+	public static void printV( String text , Integer n , Vector< Vector<String> >verb ) {
+		text = text.replaceAll("[^0-9a-zA-Z]+", " ");
+		String words[] = text.split("\\s+");//分割一个或多个空格
+		Map< String , Integer > count = new TreeMap< String , Integer >();
+		for( String word : words ){
+			int cnt = 1;
+			if( count.get(word) != null ) cnt = count.get(word) + 1;
+			count.put( word , cnt );
+		}
+		
+		for( int iii = 0 ; iii < verb.size() ; iii++ ){
+			int sum = 0;
+			for( String word:verb.get(iii) ){
+				if( count.get(word) != null ){
+					sum += count.get(word);
+					count.remove(word);
+				}
+			}
+			count.put(verb.get(iii).get(0), sum);
+		}
+		
+        List<Map.Entry<String, Integer>> printWords = new ArrayList<Map.Entry<String, Integer>>(count.entrySet());
+        Collections.sort(printWords, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                if(o1.getValue().compareTo(o2.getValue()) == 0){
+                    return o1.getKey().compareTo(o2.getKey());
+                }
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        int index = 0;
+        for( Map.Entry< String , Integer > word : printWords){ 
+        	System.out.println( word.getKey()+":" + word.getValue() ); 
+        	index++;
+        	if( index >= n && n != -1 ) break;
+        }
+	}
 	public static void main(String[] args) {
 		if( args.length < 2 ){
 			System.out.println("命令不正确!");
@@ -231,13 +273,72 @@ public class WF {
 			else if( option.equals("-f") && args.length > 2 ){
 				String fileName = args[1]; // 文件名字
 				String text = fileText( fileName );// text 为文件中的内容
-				if( Arrays.asList(args).contains("-n") ){
+				if( Arrays.asList(args).contains("-n") && !Arrays.asList(args).contains("-v") ){
 					int i = 0;
 					for( i = 0 ; i < args.length ; i++ ){
 						if( args[i].equals("-n") ) break;
 					}
 					Integer n = Integer.valueOf(args[i + 1]);
 			        printN(text , n );
+				}
+				else if( !Arrays.asList(args).contains("-n") && Arrays.asList(args).contains("-v") ){
+					int i = 0;
+					for( i = 0 ; i < args.length ; i++ ){
+						if( args[i].equals("-v") ) break;
+					}
+					String verbFile = args[i + 1];
+					BufferedReader in = null;
+					try {
+						in = new BufferedReader(new FileReader(verbFile));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					String line;
+					Vector< Vector<String> >verb = new Vector< Vector<String> >();
+			        try {
+						while ( ( line = in.readLine() ) != null ) {
+							String words[] = line.split("\\s+");//分割一个或多个空格
+							Vector<String>one = new Vector<String>();
+							for( String string : words ) one.add(string);
+							verb.add(one);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+			        printV(text , -1 , verb );
+				}
+				else if( Arrays.asList(args).contains("-n") && Arrays.asList(args).contains("-v") ){
+					int i = 0;
+					for( i = 0 ; i < args.length ; i++ ){
+						if( args[i].equals("-n") ) break;
+					}
+					Integer n = Integer.valueOf(args[i + 1]);
+					int ii = 0;
+					for( ii = 0 ; ii < args.length ; ii++ ){
+						if( args[ii].equals("-v") ) break;
+					}
+					String verbFile = args[ii + 1];
+					BufferedReader in = null;
+					try {
+						in = new BufferedReader(new FileReader(verbFile));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					String line;
+					Vector< Vector<String> >verb = new Vector< Vector<String> >();
+			        try {
+						while ( ( line = in.readLine() ) != null ) {
+							String words[] = line.split("\\s+");//分割一个或多个空格
+							Vector<String>one = new Vector<String>();
+							for( String string : words ) one.add(string);
+							verb.add(one);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+			        printV(text , n ,  verb );
 				}
 				
 			}	
@@ -279,6 +380,7 @@ public class WF {
 					}
 					else printF(text);
 				}
+				needFilesPath.clear();//清空里面的数据
 			}
 			else if( option.equals("-x") ){
 				String stopFilePath = args[1]; //黑名单
@@ -381,6 +483,9 @@ public class WF {
 						if( index >= nn ) break;
 					}
 		        }
+			}
+			else {
+				System.out.println("命令不正确！请重新输入！");
 			}
 			
 		}
