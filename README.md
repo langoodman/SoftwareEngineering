@@ -20,4 +20,11 @@
 + -x < stopwordfile > -f < file > 
   + 输出文件中所有不重复的单词，按照出现次数由多到少排列，出现次数同样多的，以字典序排列,但是不会统计stopwordfile中的单词
   + 例如：<strong>java task_4/WF -x task_4/stopWordsFiles/"1.txt" -f task_4/词频测试数据集/"1.I Have a Dream.txt"</strong>
-+ 
++  -p < file > < number >
+  + 参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列。
+  + 例如：<strong>java task_4/WF -p task_4/词频测试数据集/"1.I Have a Dream.txt" 3 -n 4</strong>
+
++ - -v < verb file >
+
+  - 参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列。
+  - 例如：<strong></strong>

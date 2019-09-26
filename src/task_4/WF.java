@@ -23,7 +23,7 @@ public class WF {
 	 * -d -s <directory>  同上， 但是会递归遍历目录下的所有子目录
 	 * -f <file> -n 参数，输出出现次数最多的前 n 个单词
 	 * -x <stopwordfile> -f <file> 输出文件中所有不重复的单词，按照出现次数由多到少排列，出现次数同样多的，以字典序排列,但是不会统计stopwordfile中的单词
-	 * 
+	 *  -p < file > < number >参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列
 	 * 
 	 * @param args
 	 */
@@ -333,7 +333,54 @@ public class WF {
 		        }
 			}			
 			else if( option.equals("-p") ){
+				String fileName = args[1]; // 文件名字
+				String text = fileText( fileName );// text 为文件中的内容
+				Integer n = Integer.valueOf(args[2]);
 				
+				Map< String , Integer > count = new TreeMap< String , Integer >();
+				text = text.replaceAll("[^0-9a-zA-Z\\s+]+", " ThisIsASplitToGet ");
+//				System.out.println(text);
+				String words[] = text.split("\\s+");//分割一个或多个空格
+				int sum = 0;
+				for( int i = 0 ; i < words.length ; i++ ){
+					String sentence = "";
+					for( int j = i ; j < n + i && j < words.length ; j++ ){
+						sentence += words[j] + " ";
+					}
+					if( sentence.indexOf("ThisIsASplitToGet") >= 0 ) continue;
+					else{
+						sum++;
+						int cnt = 1;
+						if( count.get(sentence) != null ) cnt = count.get(sentence) + 1;
+						count.put( sentence , cnt );
+					}
+				}
+				List<Map.Entry<String, Integer>> printWords = new ArrayList<Map.Entry<String, Integer>>(count.entrySet());
+		        Collections.sort(printWords, new Comparator<Map.Entry<String, Integer>>() {
+		            @Override
+		            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+		                if(o1.getValue().compareTo(o2.getValue()) == 0){
+		                    return o1.getKey().compareTo(o2.getKey());
+		                }
+		                return o2.getValue().compareTo(o1.getValue());
+		            }
+		        });
+		        
+		        int index = 0;
+		        int ii = 0 , nn = -1;
+		        if( Arrays.asList(args).contains("-n") ){
+					for( ii = 0 ; ii < args.length ; ii++ ){
+						if( args[ii].equals("-n") ) break;
+					}
+					nn = Integer.valueOf(args[ii + 1]);
+				}
+		        for( Map.Entry< String , Integer > word : printWords){ 
+		        	index++;
+		        	System.out.println( word.getKey()+":" + String.format("%.5f", (double)word.getValue() / (double)sum) ); 
+		        	if( nn != -1 ){
+						if( index >= nn ) break;
+					}
+		        }
 			}
 			
 		}
