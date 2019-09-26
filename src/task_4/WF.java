@@ -23,14 +23,14 @@ public class WF {
 	 * -d -s <directory>  同上， 但是会递归遍历目录下的所有子目录
 	 * -f <file> -n 参数，输出出现次数最多的前 n 个单词
 	 * -x <stopwordfile> -f <file> 输出文件中所有不重复的单词，按照出现次数由多到少排列，出现次数同样多的，以字典序排列,但是不会统计stopwordfile中的单词
-	 *  -p < file > < number >参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列
-	 * 
+	 * -p < file > < number >参数 < number > 说明要输出多少个词的短语，并按照出现频率排列。同一频率的词组， 按照字典序来排列
+	 * -v < verb file > 把动词的各种变形都归为它的原型来统计
 	 * @param args
 	 */
+	// -c 所用到的类
 	public static class Letter implements Comparable<Letter> {
-
-		private double appear;
-		private char oneLetter;
+		private double appear; // 出现概率
+		private char oneLetter; // 字母
 		
 		public double getAppear() {
 			return appear;
@@ -71,7 +71,6 @@ public class WF {
 		public String toString() {
 			return this.getOneLetter() + " " + String.format("%.5f", this.getAppear() );
 		}
-		
 	}
 	
 	/**
@@ -232,6 +231,7 @@ public class WF {
         	if( index >= n && n != -1 ) break;
         }
 	}
+	
 	public static void main(String[] args) {
 		if( args.length < 2 ){
 			System.out.println("命令不正确!");
