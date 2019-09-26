@@ -19,6 +19,11 @@ public class WF {
 	 * -c <file> 输出某个英文文本文件中 26 字母出现的频率，由高到低排列，并显示字母出现的百分比，精确到小数点后面两位
 	 * -f <file> 输出文件中所有不重复的单词，按照出现次数由多到少排列，出现次数同样多的，以字典序排列
 	 * -d <directory> 指定文件目录，对目录下每一个文件执行  wf.exe -f <file> 的操作
+	 * -d -s <directory>  同上， 但是会递归遍历目录下的所有子目录
+	 * -f <file> -n 参数，输出出现次数最多的前 n 个单词
+	 * -x <stopwordfile> -f <file> 输出文件中所有不重复的单词，按照出现次数由多到少排列，出现次数同样多的，以字典序排列,但是不会统计stopwordfile中的单词
+	 * 
+	 * 
 	 * @param args
 	 */
 	public static class Letter implements Comparable<Letter> {
@@ -67,6 +72,7 @@ public class WF {
 		}
 		
 	}
+	
 	/**
 	 * 获取txt文件中的文本内容
 	 * @param fileName
@@ -151,6 +157,38 @@ public class WF {
 		}
 	}
 	
+	/**
+	 * 完成 -n 的功能
+	 * @param text
+	 */
+	public static void printN( String text , Integer n ) {
+		text = text.replaceAll("[^0-9a-zA-Z]+", " ");
+		String words[] = text.split("\\s+");//分割一个或多个空格
+		Map< String , Integer > count = new TreeMap< String , Integer >();
+		for( String word : words ){
+			int cnt = 1;
+			if( count.get(word) != null ) cnt = count.get(word) + 1;
+			count.put( word , cnt );
+		}
+		
+        List<Map.Entry<String, Integer>> printWords = new ArrayList<Map.Entry<String, Integer>>(count.entrySet());
+        Collections.sort(printWords, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                if(o1.getValue().compareTo(o2.getValue()) == 0){
+                    return o1.getKey().compareTo(o2.getKey());
+                }
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        int index = 0;
+        for( Map.Entry< String , Integer > word : printWords){ 
+        	System.out.println( word.getKey()+":" + word.getValue() ); 
+        	index++;
+        	if( index > n ) break;
+        }
+	}
+	
 	public static void main(String[] args) {
 		if( args.length < 2 ){
 			System.out.println("命令不正确!");
@@ -184,11 +222,17 @@ public class WF {
 					System.out.println(letter.toString());
 				}
 			}
-			else if( option.equals("-f") ){
+			else if( option.equals("-f") && args.length == 2 ){
 				String fileName = args[1]; // 文件名字
 				String text = fileText( fileName );// text 为文件中的内容
 		        printF(text);
 			}
+			else if( option.equals("-f") && args.length > 2 ){
+				String fileName = args[1]; // 文件名字
+				String text = fileText( fileName );// text 为文件中的内容
+				Integer n = Integer.valueOf(args[3]);
+		        printN(text , n );
+			}	
 			else if( option.equals("-d") && !args[1].equals("-s") ){
 				String directoryPath = args[1];
 				File file = new File(directoryPath);//获取其file对象
@@ -211,15 +255,51 @@ public class WF {
 					System.out.println(filesPath + "的单词统计功能如下:");
 					printF(text);
 				}
+			}
+			else if( option.equals("-x") ){
+				String stopFilePath = args[1]; //黑名单
+				String fileName = args[3]; // 文件名字
+				String text = fileText( fileName );// text 为文件中的内容
+				String stopText = fileText(stopFilePath);
+				
+				text = text.replaceAll("[^0-9a-zA-Z]+", " ");
+				stopText = stopText.replaceAll("[^0-9a-zA-Z]+", " ");
+				
+				String words[] = text.split("\\s+");//分割一个或多个空格
+				String stopWords[] = stopText.split("\\s+");//分割一个或多个空格
+				
+				Map< String , Integer > count = new TreeMap< String , Integer >();
+				Map< String , Integer > flagStop = new TreeMap< String , Integer >();
+				
+				for( String stopWord : stopWords ){
+					flagStop.put(stopWord, 1);
+				}
+				
+				for( String word : words ){
+					if( flagStop.get(word) != null ) continue;
+					int cnt = 1;
+					if( count.get(word) != null ) cnt = count.get(word) + 1;
+					count.put( word , cnt );
+				}
+				
+		        List<Map.Entry<String, Integer>> printWords = new ArrayList<Map.Entry<String, Integer>>(count.entrySet());
+		        Collections.sort(printWords, new Comparator<Map.Entry<String, Integer>>() {
+		            @Override
+		            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+		                if(o1.getValue().compareTo(o2.getValue()) == 0){
+		                    return o1.getKey().compareTo(o2.getKey());
+		                }
+		                return o2.getValue().compareTo(o1.getValue());
+		            }
+		        });
+		        for( Map.Entry< String , Integer > word : printWords){ 
+		        	System.out.println( word.getKey()+":" + word.getValue() ); 
+		        }
+			}			
+			else if( option.equals("-p") ){
 				
 			}
-			else if( option.equals("-d") ){
-				
-			}			
-			else if( option.equals("-d") ){
-				
-			}			
-			else if( option.equals("-d") ){
+			else if( option.equals("-v") ){
 				
 			}
 		}
