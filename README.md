@@ -29,3 +29,13 @@
 + -v  < verb file >
   - 把动词的各种变形都归为它的原型来统计。
   - 例如：<strong>java task_4/WF -f task_4/词频测试数据集/"1.I Have a Dream.txt" -v task_4/verbWordsFiles/"1.txt" -n 4</strong>
+
+---
+
+# Task_3 Calculator 简易计算器功能运行介绍
+
+- 重新编译方式：在  <strong>Test1/src/task_3/  </strong>下运行:  <strong>javac -encoding UTF-8 Calculator.java  </strong>
+- 运行目录：<strong>Test1/src/ </strong>
+- 命令：<strong>java task_3/Calculator n</strong>, n 表示生产的题目的数量
+- 生成的题目的文件在<strong>Test1\src\task_3\problemsTxt</strong>
+
